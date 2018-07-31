@@ -1,58 +1,93 @@
+import {
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLID,
+    GraphQLString,
+    GraphQLInt,
+    GraphQLBoolean,
+    GraphQLNonNull,
+    GraphQLList } from 'graphql'
 import Authors from './data/authors' 
 import Posts from './data/posts'
+import Videos from './data/videos'
+import { resolve } from 'path';
+import { getVideoById, getVideos } from './helpers'
 
-// Here a simple schema is constructed without using the GraphQL query language. 
-// e.g. using 'new GraphQLObjectType' to create an object type 
-
-import {
-    // These are the basic GraphQL types need in this tutorial
-    GraphQLString,
-    GraphQLList,
-    GraphQLObjectType,
-    // This is used to create required fileds and arguments
-    GraphQLNonNull,
-    // This is the class we need to create the schema
-    GraphQLSchema,
-} from 'graphql'
-import _ from 'lodash/collection'
-
-// Types in GraphQL
-// Basic types include ID, String, Int, Float and Boolean
+// VideoType
+const VideoType = new GraphQLObjectType({
+    name: 'Video',
+    description: 'Represent a Video',
+    fields: {
+        id: {
+            type: GraphQLID,
+            description: 'Id of the video'
+        },
+        title: {
+            type: GraphQLString,
+            description: 'Title of the video'
+        },
+        duration: {
+            type: GraphQLInt,
+            description: 'Duration of the video'
+        },
+        watched: {
+            type: GraphQLBoolean,
+            description: 'Whether or not the viewer has watch the video'
+        }
+    }
+})
 
 // AuthorType
 const AuthorType = new GraphQLObjectType({
     name: "Author",
-    description: "This represent an author",
-    fields: () => ({
-        id: {type: new GraphQLNonNull(GraphQLString)},
-        name: {type: new GraphQLNonNull(GraphQLString)},
-        twitterHandle: {type: GraphQLString}
-    })
+    description: "Represent a Author",
+    fields: {
+        id: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Id of the author'
+        },
+        name: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Name of the author'
+        },
+        twitterHandle: {
+            type: GraphQLString,
+            description: 'Twitter name account'
+        }
+    }
 })
 
 // PostType
 const PostType = new GraphQLObjectType({
     name: "Post",
-    description: "This represent a Post",
-    fields: () => ({
-        id: {type: new GraphQLNonNull(GraphQLString)},
-        title: {type: new GraphQLNonNull(GraphQLString)},
-        body: {type: GraphQLString},
+    description: "Represent a Post",
+    fields: {
+        id: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Id of the post'
+        },
+        title: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'Title of the post'
+        },
+        body: {
+            type: GraphQLString,
+            description: 'Body content of the post'
+        },
         author: {
             type: AuthorType,
+            description: 'Author information from the post',
             resolve: function(post) {
-                return _.find(Authors, a => a.id == post.author_id);
+                return Authors.find(a => a.id == post.author_id)
             }
         }
-    })
+    }
 })
 
-// Root query is an entry point to GraphQL API
-// This is the Root Query
-// Here Root query is defined as BlogQueryRootType. name and description is self descriptive.
-const BlogQueryRootType = new GraphQLObjectType({
-    name: 'BlogAppSchema',
-    description: "Blog Application Schema Query Root",
+// Root Query
+const QueryRootType = new GraphQLObjectType({
+    name: 'AppSchema',
+    description: "Application Schema Query Root",
     fields: () => ({
         authors: {
             type: new GraphQLList(AuthorType),
@@ -67,22 +102,30 @@ const BlogQueryRootType = new GraphQLObjectType({
             resolve: function() {
                 return Posts
             }
+        },
+        videos: {
+            type: new GraphQLList(VideoType),
+            description: "List of all Videos",
+            resolve: getVideos
+        },
+        video: {
+            type: VideoType,
+            description: "Single video",
+            args: {
+                id: {
+                    type: new GraphQLNonNull(GraphQLID),
+                    description: 'Id of the video'
+                }
+            },
+            resolve: (_, args) => {
+                return getVideoById(args.id)
+            }
         }
     })
 })
 
-// Defining a Schema
-/*
-Schema defines how you want the data in your application to be shaped and how you want the data to be related with each other. Schema defination affects the way data will be stored in your database(s). In schema defination you’ll also be defining what queries, mutations, and subscriptions that will be made available to the front-end displaying the data.
-*/
-
-// This is the schema declaration
-const BlogAppSchema = new GraphQLSchema({
-    query: BlogQueryRootType
-    // If you need to create or updata a datasource, 
-    // you use mutations. Note:
-    // mutations will not be explored in this post.
-    // mutation: BlogMutationRootType 
+const AppSchema = new GraphQLSchema({
+    query: QueryRootType
 });
 
-export default BlogAppSchema;
+export default AppSchema;

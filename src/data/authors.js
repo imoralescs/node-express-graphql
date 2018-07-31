@@ -1,18 +1,18 @@
 const Authors = [
     {
         id: '8dlx7ak38fd39dv79ad', 
-        name: 'Orinami Olatunji',
-        twitterHandle: '@orinami_'
+        name: 'Isiah Hamilton',
+        twitterHandle: '@isiah2000'
     },
     {
         id: 'jd3kd03d0w9a0l35rh74', 
-        name: 'Ojima Udale',
-        twitterHandle: '@uncooloj'
+        name: 'Giovanni Harvey',
+        twitterHandle: '@gio_har'
     },
     {
         id: '0hy894hf0dlkfh9oinv', 
-        name: 'Xabi Alonso',
-        twitterHandle: '@alonso'
+        name: 'Lawrence Rhodes',
+        twitterHandle: '@rhodes'
     }
 ];
   
