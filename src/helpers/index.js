@@ -11,3 +11,20 @@ export const getVideoById = (id) => new Promise((resolve) => {
 
 // Helper to get all video
 export const getVideos = () => new Promise((resolve) => resolve(Videos))
+
+// Helper to create video
+export const createVideo =({ title, duration, watched }) => {
+    const 
+        id = Videos.length + 1,
+        video = {
+            id : id.toString(),
+            title,
+            duration,
+            watched
+        };
+    
+    // Save on memory
+    Videos.push(video)
+    
+    return video
+}
