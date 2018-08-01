@@ -96,7 +96,7 @@ const PostType = new GraphQLObjectType({
  */
 
 //* Root Query
-const QueryRootType = new GraphQLObjectType({
+const query = new GraphQLObjectType({
     name: 'Query',
     description: 'Application Schema Query Root.',
     fields: () => ({
@@ -139,48 +139,6 @@ const QueryRootType = new GraphQLObjectType({
  * Mutation
  */
 
-// Simple mutation
-/* 
-const mutation = new GraphQLObjectType({
-    name: 'Mutation',
-    description: 'The root mutation type.',
-    fields: {
-        createVideo: {
-            type: VideoType,
-            args: {
-                title: {
-                    type: new GraphQLNonNull(GraphQLString),
-                    description: 'The title of the video.'
-                },
-                duration: {
-                    type: new GraphQLNonNull(GraphQLInt),
-                    description: 'The duration of the video (in seconds).'
-                },
-                watched: {
-                    type: new GraphQLNonNull(GraphQLBoolean),
-                    description: 'Whether or not the video is released.'
-                }
-            },
-            resolve: (_, args) => {
-                return createVideo(args)
-            }
-        }
-    }
-})
-*/
-
-/*
-mutation {
-    createVideo(title: "Foo", duration: 300, watched: false) {
-        title
-        duration
-        watched
-    }
-}
-*/
-
-// Using InputObjectTypes for complex
-
 const VideoInputType = new GraphQLInputObjectType({
     name: 'VideoInput',
     fields: {
@@ -206,6 +164,7 @@ const mutation = new GraphQLObjectType({
         createVideo: {
             type: VideoType,
             args: {
+                // common used the word "input" instead "video"
                 video : {
                     type: new GraphQLNonNull(VideoInputType)
                 }
@@ -217,22 +176,9 @@ const mutation = new GraphQLObjectType({
     }
 })
 
-/* 
-mutation{
-  createVideo(video: {
-    title: "Foo",
-    duration: 300,
-    watched: false
-  }) {
-    title
-    duration
-    watched
-  }
-}
-*/
-const AppSchema = new GraphQLSchema({
-    query: QueryRootType,
+const schema = new GraphQLSchema({
+    query: query,
     mutation: mutation
 });
 
-export default AppSchema;
+export default schema;
